@@ -1,41 +1,49 @@
 import { useState, useEffect } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 
 function App() {
-  // This state variable will hold the message from our API
-  const [apiMessage, setApiMessage] = useState('')
+  // Create a state variable to hold our array of books.
+  // The initial value is an empty array [].
+  const [books, setBooks] = useState([]);
+  const [loading, setLoading] = useState(true); // A state to know when data is being fetched
 
   // This useEffect hook runs our code once when the component loads
   useEffect(() => {
-    fetch('http://127.0.0.1:8000/api/greeting')
-      .then(response => response.json())
+    // Fetch data from our NEW /api/books endpoint
+    fetch('http://127.0.0.1:8000/api/books')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
       .then(data => {
-        // We take the message from the API and set it as our state
-        setApiMessage(data.message);
+        setBooks(data); // Store the array of books from the API in our state
+        setLoading(false); // Set loading to false because we have the data
       })
       .catch(error => {
-        console.error('Error connecting to API:', error);
-        setApiMessage('Could not connect to the backend API.');
+        console.error('There was an error fetching the books:', error);
+        setLoading(false); // Also stop loading if there's an error
       });
-  }, []); // The empty [] means this code only runs one time.
+  }, []); // The empty [] means this effect runs only once
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React E-Library</h1>
+      <h1>E-Library Book Collection</h1>
       <div className="card">
-        <p>
-          <strong>API Status:</strong> {apiMessage || 'Connecting...'}
-        </p>
+        <h2>Available Books</h2>
+        <div className="book-list">
+          {loading && <p>Loading books...</p>}
+          {!loading && books.length === 0 && <p>No books found.</p>}
+          
+          {/* We map over the 'books' array to create a list item for each book */}
+          {books.map(book => (
+            <div key={book.id} className="book-item">
+              <h3>{book.title}</h3>
+              <p>by {book.author}</p>
+            </div>
+          ))}
+        </div>
       </div>
     </>
   )
