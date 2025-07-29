@@ -1,8 +1,6 @@
 // src/pages/Register.jsx
-
 import React, { useState } from 'react';
-import { Container, Box, Typography, TextField, Button, Alert } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 
 function Register() {
@@ -10,35 +8,52 @@ function Register() {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    if (formData.password !== formData.password_confirmation) {
+        setError("Passwords do not match.");
+        return;
+    }
     try {
       await axios.post('http://127.0.0.1:8000/api/register', formData);
-      navigate('/login'); // Redirect to login page on success
+      navigate('/login');
     } catch (err) {
-      setError(err.response?.data?.message || 'Registration failed.');
-      console.error(err);
+      setError(err.response?.data?.message || 'Registration failed. Please try again.');
     }
   };
 
   return (
-    <Container component="main" maxWidth="xs">
-      {/* ... MUI Box structure ... */}
-      <Typography component="h1" variant="h5">Sign up</Typography>
-      {error && <Alert severity="error" sx={{ width: '100%', mt: 2 }}>{error}</Alert>}
-      <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
-        <TextField onChange={handleChange} margin="normal" required fullWidth name="name" label="Full Name" autoFocus />
-        <TextField onChange={handleChange} margin="normal" required fullWidth name="email" label="Email Address" />
-        <TextField onChange={handleChange} margin="normal" required fullWidth name="password" label="Password" type="password" />
-        <TextField onChange={handleChange} margin="normal" required fullWidth name="password_confirmation" label="Confirm Password" type="password" />
-        <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>Sign Up</Button>
-      </Box>
-    </Container>
+    <div className="max-w-md mx-auto mt-10 p-8 bg-parchment-cream/70 rounded-lg shadow-xl border border-dusty-rose">
+      <h1 className="font-serif-display text-4xl text-center mb-6">Join the Library</h1>
+      {error && <p className="bg-red-200 text-red-800 p-3 rounded-md mb-4">{error}</p>}
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div>
+          <label htmlFor="name" className="block text-sm font-medium text-old-book-brown">Your Name</label>
+          <input type="text" name="name" id="name" onChange={handleChange} className="form-input mt-1" required />
+        </div>
+        <div>
+          <label htmlFor="email" className="block text-sm font-medium text-old-book-brown">Email Address</label>
+          <input type="email" name="email" id="email" onChange={handleChange} className="form-input mt-1" required />
+        </div>
+        <div>
+          <label htmlFor="password" className="block text-sm font-medium text-old-book-brown">Password</label>
+          <input type="password" name="password" id="password" onChange={handleChange} className="form-input mt-1" required />
+        </div>
+        <div>
+          <label htmlFor="password_confirmation" className="block text-sm font-medium text-old-book-brown">Confirm Password</label>
+          <input type="password" name="password_confirmation" id="password_confirmation" onChange={handleChange} className="form-input mt-1" required />
+        </div>
+        <div>
+          <button type="submit" className="btn w-full">Create Account</button>
+        </div>
+      </form>
+      <p className="text-center mt-4 text-sm">
+        Already have an account? <Link to="/login" className="text-enchanted-teal hover:underline">Sign in</Link>
+      </p>
+    </div>
   );
 }
 

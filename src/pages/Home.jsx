@@ -1,34 +1,23 @@
 // src/pages/Home.jsx
-
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import BookList from '../components/BookList';
-import { Typography } from '@mui/material';
 
 function Home() {
-    const [books, setBooks] = useState([]);
-    const [loading, setLoading] = useState(true);
+  const [books, setBooks] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        fetch('http://127.0.0.1:8000/api/books')
-            .then(response => response.json())
-            .then(data => {
-                setBooks(data);
-                setLoading(false);
-            })
-            .catch(error => {
-                console.error('There was an error fetching the books:', error);
-                setLoading(false);
-            });
-    }, []);
+  useEffect(() => {
+    axios.get('http://127.0.0.1:8000/api/books')
+      .then(response => { setBooks(response.data); setLoading(false); })
+      .catch(error => { console.error('Error fetching books:', error); setLoading(false); });
+  }, []);
 
-    return (
-        <>
-            <Typography variant="h2" component="h1" gutterBottom align="center">
-                E-Library Collection
-            </Typography>
-            <BookList loading={loading} books={books} />
-        </>
-    );
+  return (
+    <div>
+      <h1 className="text-center font-serif-display text-5xl mb-12 text-old-book-brown">Our Collection</h1>
+      <BookList loading={loading} books={books} />
+    </div>
+  );
 }
-
 export default Home;

@@ -1,46 +1,50 @@
 // src/pages/Login.jsx
-
 import React, { useState, useContext } from 'react';
-import { Container, Box, Typography, TextField, Button, Alert } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
-import AuthContext from '../context/AuthContext'; // <-- Import the context
+import AuthContext from '../context/AuthContext';
 
 function Login() {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  const { login } = useContext(AuthContext); // <-- Get the login function
+  const { login } = useContext(AuthContext);
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     try {
       const response = await axios.post('http://127.0.0.1:8000/api/login', formData);
-      // Call the context login function with the user and token
       login(response.data.user, response.data.access_token);
-      navigate('/'); // Redirect to home page on success
+      navigate('/');
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed.');
-      console.error(err);
+      setError(err.response?.data?.message || 'Login failed. Please check your credentials.');
     }
   };
 
   return (
-    <Container component="main" maxWidth="xs">
-        {/* ... MUI Box structure ... */}
-        <Typography component="h1" variant="h5">Sign in</Typography>
-        {error && <Alert severity="error" sx={{ width: '100%', mt: 2 }}>{error}</Alert>}
-        <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
-            <TextField onChange={handleChange} margin="normal" required fullWidth name="email" label="Email Address" autoFocus />
-            <TextField onChange={handleChange} margin="normal" required fullWidth name="password" label="Password" type="password" />
-            <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>Sign In</Button>
-        </Box>
-    </Container>
+    <div className="max-w-md mx-auto mt-10 p-8 bg-parchment-cream/70 rounded-lg shadow-xl border border-dusty-rose">
+      <h1 className="font-serif-display text-4xl text-center mb-6">Welcome Back</h1>
+      {error && <p className="bg-red-200 text-red-800 p-3 rounded-md mb-4">{error}</p>}
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div>
+          <label htmlFor="email" className="block text-sm font-medium text-old-book-brown">Email Address</label>
+          <input type="email" name="email" id="email" onChange={handleChange} className="form-input mt-1" required />
+        </div>
+        <div>
+          <label htmlFor="password" className="block text-sm font-medium text-old-book-brown">Password</label>
+          <input type="password" name="password" id="password" onChange={handleChange} className="form-input mt-1" required />
+        </div>
+        <div>
+          <button type="submit" className="btn w-full">Sign In</button>
+        </div>
+      </form>
+      <p className="text-center mt-4 text-sm">
+        Don't have an account? <Link to="/register" className="text-enchanted-teal hover:underline">Sign up</Link>
+      </p>
+    </div>
   );
 }
 

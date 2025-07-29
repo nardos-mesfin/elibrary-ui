@@ -2,7 +2,6 @@
 
 import React, { createContext, useState, useEffect } from 'react';
 import axios from 'axios';
-import { Box, CircularProgress } from '@mui/material';
 
 const AuthContext = createContext();
 
@@ -55,12 +54,12 @@ export const AuthProvider = ({ children }) => {
     };
 
     // While verifying the user for the first time, show a full-page loader.
-    // This prevents any part of the app from rendering with incorrect auth state.
+    // This is the part we are changing to use Tailwind CSS.
     if (loading) {
         return (
-            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-                <CircularProgress />
-            </Box>
+            <div className="flex justify-center items-center h-screen bg-parchment-cream">
+                <div className="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-enchanted-teal"></div>
+            </div>
         );
     }
 
