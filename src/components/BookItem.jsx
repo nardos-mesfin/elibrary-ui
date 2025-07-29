@@ -1,14 +1,27 @@
 // src/components/BookItem.jsx
 
 import React from 'react';
+// Import the MUI components we need
+import { Grid, Card, CardContent, Typography } from '@mui/material';
 
-// We receive the 'book' object as a prop from the parent component (BookList)
 function BookItem({ book }) {
   return (
-    <div className="book-item">
-      <h3>{book.title}</h3>
-      <p>by {book.author}</p>
-    </div>
+    // Grid item will manage the responsive layout
+    <Grid item xs={12} sm={6} md={4}>
+      <Card sx={{ height: '100%' }}>
+        <CardContent>
+          <Typography variant="h5" component="div">
+            {book.title}
+          </Typography>
+          <Typography sx={{ mb: 1.5 }} color="text.secondary">
+            by {book.author}
+          </Typography>
+          <Typography variant="body2">
+            {book.summary || 'No summary available.'}
+          </Typography>
+        </CardContent>
+      </Card>
+    </Grid>
   );
 }
 

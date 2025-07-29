@@ -1,11 +1,12 @@
 // src/App.jsx
 
 import { useState, useEffect } from 'react';
-import BookList from './components/BookList'; // Import our new BookList component
-import './App.css';
+import BookList from './components/BookList';
+// Import the main layout and typography components from MUI
+import { Container, Typography, CssBaseline } from '@mui/material';
+import './App.css'; // We can keep this for any future custom styles
 
 function App() {
-  // State management remains here, as App is the "owner" of the data.
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -22,15 +23,16 @@ function App() {
       });
   }, []);
 
-  // The rendering logic is now much cleaner.
   return (
     <>
-      <h1>E-Library Book Collection</h1>
-      <div className="card">
-        <h2>Available Books</h2>
-        {/* We render the BookList component and pass the data down as props */}
+      {/* CssBaseline provides a consistent baseline style */}
+      <CssBaseline />
+      <Container maxWidth="lg" sx={{ py: 4 }}>
+        <Typography variant="h2" component="h1" gutterBottom align="center">
+          E-Library Collection
+        </Typography>
         <BookList loading={loading} books={books} />
-      </div>
+      </Container>
     </>
   );
 }

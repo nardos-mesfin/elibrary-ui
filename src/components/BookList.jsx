@@ -1,25 +1,31 @@
 // src/components/BookList.jsx
 
 import React from 'react';
-import BookItem from './BookItem'; // Import the smaller component
+import BookItem from './BookItem';
+// Import Grid for layout, Box for centering, and CircularProgress for loading
+import { Grid, Box, CircularProgress, Typography } from '@mui/material';
 
-// We receive the 'books' array and the 'loading' state as props
 function BookList({ books, loading }) {
   if (loading) {
-    return <p>Loading books...</p>;
+    // Center the loading spinner
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+        <CircularProgress />
+      </Box>
+    );
   }
 
   if (books.length === 0) {
-    return <p>No books found.</p>;
+    return <Typography>No books found.</Typography>;
   }
 
   return (
-    <div className="book-list">
-      {/* We map over the books array and render a BookItem for each one */}
+    // Grid container manages the layout of its Grid item children
+    <Grid container spacing={3} sx={{ mt: 2 }}>
       {books.map(book => (
         <BookItem key={book.id} book={book} />
       ))}
-    </div>
+    </Grid>
   );
 }
 
