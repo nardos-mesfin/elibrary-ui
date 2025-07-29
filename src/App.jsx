@@ -12,6 +12,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import AdminRoute from './components/AdminRoute';
 import AdminDashboard from './pages/AdminDashboard';
 import ManageUsers from './pages/ManageUsers';
+import BookDetail from './pages/BookDetail';
 
 function App() {
   const location = useLocation();
@@ -30,6 +31,7 @@ function App() {
           >
             <Routes location={location}>
               <Route path="/" element={<Home />} />
+              <Route path="/books/:id" element={<BookDetail />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
 
