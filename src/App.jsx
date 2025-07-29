@@ -4,10 +4,11 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { Container, CssBaseline } from '@mui/material';
 import Navbar from './components/Navbar'; 
-// Import the pages
-import Home from './pages/Home'; // We will create this next
+import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import Profile from './pages/Profile';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   return (
@@ -17,10 +18,14 @@ function App() {
       <Container maxWidth="lg" sx={{ py: 4 }}>
         {/* The Routes component wraps all our individual routes */}
         <Routes>
-          {/* Each Route defines a path and the component to render */}
+           {/* Public Routes */}
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+
+          <Route element={<ProtectedRoute />}>
+            <Route path="/profile" element={<Profile />} />
+          </Route>
         </Routes>
       </Container>
     </>

@@ -26,6 +26,7 @@ function Navbar() {
           // If user is logged in
           <Box>
             <Typography component="span" sx={{ mr: 2 }}>Welcome, {user.name}</Typography>
+            <Button color="inherit" component={Link} to="/profile">My Profile</Button>
             <Button color="inherit" onClick={handleLogout}>Logout</Button>
           </Box>
         ) : (
