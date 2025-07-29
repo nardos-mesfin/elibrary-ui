@@ -48,7 +48,7 @@ function AdminDashboard() {
         
         {/* Placeholder for future features */}
         <AdminCard 
-          to="#" 
+          to="/admin/users" 
           title="Manage Scribes" 
           description="View and manage all registered library members."
           delay={0.1}

@@ -11,6 +11,7 @@ import CreateBook from './pages/CreateBook';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminRoute from './components/AdminRoute';
 import AdminDashboard from './pages/AdminDashboard';
+import ManageUsers from './pages/ManageUsers';
 
 function App() {
   const location = useLocation();
@@ -39,6 +40,7 @@ function App() {
               {/* Admin Routes are now nested and guarded */}
               <Route element={<AdminRoute />}>
                 <Route path="/admin" element={<AdminDashboard />} />
+                <Route path="/admin/users" element={<ManageUsers />} />
                 <Route path="/books/create" element={<CreateBook />} />
               </Route>
             </Routes>
