@@ -19,7 +19,9 @@ function Navbar() {
             {user ? (
               <>
                 <span className="hidden md:inline">Welcome, {user.name}</span>
-                {user.is_admin === 1 && <Link to="/books/create" className="btn">Add Book</Link>}
+                {user.is_admin === 1 && (
+                  <Link to="/admin" className="btn">Admin</Link>
+                )}
                 <Link to="/profile" className="hover:text-gilded-gold transition-colors">Profile</Link>
                 <button onClick={handleLogout} className="hover:text-gilded-gold transition-colors">Logout</button>
               </>
