@@ -9,6 +9,8 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Profile from './pages/Profile';
 import ProtectedRoute from './components/ProtectedRoute';
+import CreateBook from './pages/CreateBook'; 
+import AdminRoute from './components/AdminRoute'; 
 
 function App() {
   return (
@@ -25,6 +27,10 @@ function App() {
 
           <Route element={<ProtectedRoute />}>
             <Route path="/profile" element={<Profile />} />
+          </Route>
+
+          <Route element={<AdminRoute />}>
+            <Route path="/books/create" element={<CreateBook />} />
           </Route>
         </Routes>
       </Container>

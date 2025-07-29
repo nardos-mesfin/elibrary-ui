@@ -26,6 +26,9 @@ function Navbar() {
           // If user is logged in
           <Box>
             <Typography component="span" sx={{ mr: 2 }}>Welcome, {user.name}</Typography>
+            {user.is_admin ? (
+                <Button color="inherit" component={Link} to="/books/create">Add Book</Button>
+            ) : null}
             <Button color="inherit" component={Link} to="/profile">My Profile</Button>
             <Button color="inherit" onClick={handleLogout}>Logout</Button>
           </Box>
