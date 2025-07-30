@@ -4,6 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import AuthContext from '../context/AuthContext';
 import ConfirmationModal from '../components/ConfirmationModal';
+import { Link } from 'react-router-dom'; 
 
 function BookDetail() {
   const { id } = useParams();
@@ -67,10 +68,13 @@ function BookDetail() {
           </div>
 
           {user && user.is_admin === 1 && (
-            <div className="mt-8">
-              <button onClick={handleDeleteClick} className="btn bg-red-800 hover:bg-red-900">
-                Remove from Library
-              </button>
+            <div className="mt-8 flex space-x-4">
+                <Link to={`/books/${book.id}/edit`} className="btn">
+                    Edit Tome
+                </Link>
+                <button onClick={handleDeleteClick} className="btn bg-red-800 hover:bg-red-900">
+                    Remove from Library
+                </button>
             </div>
           )}
         </div>

@@ -13,6 +13,7 @@ import AdminRoute from './components/AdminRoute';
 import AdminDashboard from './pages/AdminDashboard';
 import ManageUsers from './pages/ManageUsers';
 import BookDetail from './pages/BookDetail';
+import EditBook from './pages/EditBook';
 
 function App() {
   const location = useLocation();
@@ -44,6 +45,7 @@ function App() {
                 <Route path="/admin" element={<AdminDashboard />} />
                 <Route path="/admin/users" element={<ManageUsers />} />
                 <Route path="/books/create" element={<CreateBook />} />
+                <Route path="/books/:id/edit" element={<EditBook />} />
               </Route>
             </Routes>
           </motion.div>
