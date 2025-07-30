@@ -59,6 +59,13 @@ function BookDetail() {
         <div className="md:w-2/3">
           <h1 className="font-serif-display text-5xl text-old-book-brown">{book.title}</h1>
           <h2 className="font-serif-body text-2xl text-old-book-brown/80 mt-2">by {book.author}</h2>
+          <div className="flex flex-wrap gap-2 mt-4">
+            {book.categories && book.categories.map(category => (
+              <span key={category.id} className="bg-enchanted-teal/20 text-enchanted-teal text-sm font-serif-body px-3 py-1 rounded-full">
+                {category.name}
+              </span>
+            ))}
+          </div>
           <p className="mt-6 text-lg leading-relaxed">
             {book.summary || "No summary is written for this tome yet."}
           </p>

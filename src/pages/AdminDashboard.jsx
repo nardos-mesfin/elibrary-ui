@@ -45,8 +45,6 @@ function AdminDashboard() {
           description="Add a new book to the library's collection."
           delay={0}
         />
-        
-        {/* Placeholder for future features */}
         <AdminCard 
           to="/admin/users" 
           title="Manage Scribes" 
@@ -57,6 +55,12 @@ function AdminDashboard() {
           to="#" 
           title="View Library Scrolls" 
           description="See analytics and statistics for the library."
+          delay={0.2}
+        />
+        <AdminCard 
+          to="/admin/categories" 
+          title="Organize Archives" 
+          description="Create and manage the library's categories."
           delay={0.2}
         />
       </motion.div>

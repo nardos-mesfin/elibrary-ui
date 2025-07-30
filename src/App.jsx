@@ -14,6 +14,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import ManageUsers from './pages/ManageUsers';
 import BookDetail from './pages/BookDetail';
 import EditBook from './pages/EditBook';
+import ManageCategories from './pages/ManageCategories';
 
 function App() {
   const location = useLocation();
@@ -46,6 +47,7 @@ function App() {
                 <Route path="/admin/users" element={<ManageUsers />} />
                 <Route path="/books/create" element={<CreateBook />} />
                 <Route path="/books/:id/edit" element={<EditBook />} />
+                <Route path="/admin/categories" element={<ManageCategories />} />
               </Route>
             </Routes>
           </motion.div>

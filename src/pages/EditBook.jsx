@@ -15,6 +15,8 @@ function EditBook() {
     pages: ''
   });
   const [coverImage, setCoverImage] = useState(null);
+  const [allCategories, setAllCategories] = useState([]);
+  const [selectedCategories, setSelectedCategories] = useState([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
 
@@ -22,6 +24,7 @@ function EditBook() {
     axios.get(`/api/books/${id}`)
       .then(response => {
         setFormData(response.data);
+        setSelectedCategories(response.data.categories.map(cat => cat.id));
         setLoading(false);
       })
       .catch(err => {
@@ -29,6 +32,10 @@ function EditBook() {
         setError("Could not load the tome's current inscriptions.");
         setLoading(false);
       });
+
+    axios.get('/api/admin/categories')
+      .then(response => setAllCategories(response.data))
+      .catch(err => console.error('Failed to fetch categories:', err));
   }, [id]);
 
   const handleTextChange = (e) => {
@@ -37,6 +44,14 @@ function EditBook() {
 
   const handleFileChange = (e) => {
     setCoverImage(e.target.files[0]);
+  };
+
+  const handleCategoryChange = (categoryId) => {
+    setSelectedCategories(prev =>
+      prev.includes(categoryId)
+        ? prev.filter(id => id !== categoryId)
+        : [...prev, categoryId]
+    );
   };
 
   const handleSubmit = async (e) => {
@@ -51,10 +66,13 @@ function EditBook() {
     if (coverImage) {
       submissionData.append('cover_image', coverImage);
     }
+    selectedCategories.forEach(id =>
+      submissionData.append('categories[]', id)
+    );
 
     try {
-        await axios.post(`/api/books/${id}/update`, submissionData); 
-        navigate(`/books/${id}`);
+      await axios.post(`/api/books/${id}/update`, submissionData);
+      navigate(`/books/${id}`);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to save your revisions.');
     }
@@ -144,6 +162,28 @@ function EditBook() {
             onChange={handleFileChange}
             className="form-input mt-1 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-enchanted-teal/20 file:text-enchanted-teal hover:file:bg-enchanted-teal/30"
           />
+        </div>
+
+        {/* Categories Section */}
+        <div>
+          <label className="block text-sm font-medium text-old-book-brown mb-2">Categories</label>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 p-4 border border-dusty-rose rounded-md bg-white">
+            {allCategories.length > 0 ? (
+              allCategories.map(category => (
+                <label key={category.id} className="flex items-center space-x-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={selectedCategories.includes(category.id)}
+                    onChange={() => handleCategoryChange(category.id)}
+                    className="h-4 w-4 rounded border-gray-300 text-enchanted-teal focus:ring-enchanted-teal"
+                  />
+                  <span>{category.name}</span>
+                </label>
+              ))
+            ) : (
+              <p className="text-sm text-gray-500 col-span-full">No categories available.</p>
+            )}
+          </div>
         </div>
 
         <div>
