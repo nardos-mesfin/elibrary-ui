@@ -15,7 +15,7 @@ function BookItem({ book }) {
         <div className="absolute -inset-1 bg-gradient-to-r from-gilded-gold to-dusty-rose rounded-lg blur opacity-0 group-hover:opacity-75 transition duration-500"></div>
         <div className="relative w-full h-96 bg-gray-200">
           <img 
-            src={book.cover_image_url || `https://source.unsplash.com/400x600/?book,fantasy,${book.id}`}
+            src={book.full_cover_url || `https://source.unsplash.com/400x600/?book,fantasy,${book.id}`}
             alt={`Cover of ${book.title}`}
             className="w-full h-full object-cover"
           />

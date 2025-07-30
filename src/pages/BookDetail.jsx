@@ -44,9 +44,9 @@ function BookDetail() {
     <div className="flex flex-col md:flex-row gap-12 mt-8">
       <div className="md:w-1/3">
         <img 
-          src={book.cover_image_url || `https://source.unsplash.com/400x600/?book,fantasy,${book.id}`} 
-          alt={`Cover of ${book.title}`}
-          className="w-full rounded-lg shadow-2xl"
+           src={book.full_cover_url || `https://source.unsplash.com/400x600/?book,fantasy,${book.id}`}
+           alt={`Cover of ${book.title}`}
+           className="w-full h-full object-cover"
         />
       </div>
       <div className="md:w-2/3">
