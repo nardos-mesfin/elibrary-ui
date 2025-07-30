@@ -44,7 +44,7 @@ function EditBook() {
     setError('');
 
     const submissionData = new FormData();
-    submissionData.append('_method', 'PUT');
+    submissionData.append('_method', 'POST');
     Object.keys(formData).forEach(key => {
       submissionData.append(key, formData[key]);
     });
@@ -53,8 +53,8 @@ function EditBook() {
     }
 
     try {
-      await axios.post(`/api/books/${id}`, submissionData);
-      navigate(`/books/${id}`);
+        await axios.post(`/api/books/${id}/update`, submissionData); 
+        navigate(`/books/${id}`);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to save your revisions.');
     }
