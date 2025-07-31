@@ -18,31 +18,3 @@
     @apply px-6 py-2 bg-enchanted-teal text-parchment-cream font-serif-display rounded-md shadow-md hover:bg-teal-700 hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-150;
   }
 }
-
-/* === The Living Bookshelf Styles === */
-
-/* The main container that hides the overflowing content */
-.marquee-container {
-  overflow-x: hidden;
-  position: relative;
-  /* Add a subtle fade on the left and right edges */
-  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
-  mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
-}
-
-/* The content wrapper that will be animated */
-.marquee-content {
-  display: flex;
-  animation: scroll-left 40s linear infinite;
-}
-
-/* The keyframe animation for the scroll */
-@keyframes scroll-left {
-  from {
-    transform: translateX(0);
-  }
-  /* We move it exactly the width of ONE set of the books */
-  to {
-    transform: translateX(-100%);
-  }
-}

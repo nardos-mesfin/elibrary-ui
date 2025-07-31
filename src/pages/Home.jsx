@@ -1,7 +1,7 @@
 // src/pages/Home.jsx
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import MarqueeCarousel from '../components/MarqueeCarousel';
+import BreathingCarousel from '../components/BreathingCarousel';
 import BookList from '../components/BookList'; // Our existing grid for search results
 
 function Home() {
@@ -80,8 +80,8 @@ function Home() {
       ) : (
         <>
           {/* The Carousels */}
-          <MarqueeCarousel title="Newly Added Tomes" books={latestBooks} loading={loading} />
-          <MarqueeCarousel title="Popular Archives" books={popularBooks} loading={loading} />
+          <BreathingCarousel title="Newly Added Tomes" books={latestBooks} loading={loading} />
+          <BreathingCarousel title="Popular Archives" books={popularBooks} loading={loading} />
         </>
       )}
     </div>
