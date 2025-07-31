@@ -19,48 +19,30 @@
   }
 }
 
-/* === The Infinite Orrery Styles === */
+/* === The Living Bookshelf Styles === */
 
-/* The main container that creates the 3D space */
-.orrery-container {
-  perspective: 1000px;
+/* The main container that hides the overflowing content */
+.marquee-container {
+  overflow-x: hidden;
   position: relative;
-  width: 100%;
-  height: 20rem; /* 320px */
+  /* Add a subtle fade on the left and right edges */
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+}
+
+/* The content wrapper that will be animated */
+.marquee-content {
   display: flex;
-  justify-content: center;
-  align-items: center;
+  animation: scroll-left 40s linear infinite;
 }
 
-/* The scene that holds and rotates all the books */
-.orrery-scene {
-  width: 10rem; /* 160px */
-  height: 14rem; /* 224px */
-  position: relative;
-  transform-style: preserve-3d;
-  animation: rotate-orrery 30s linear infinite; /* The infinite rotation animation */
-}
-
-/* Pause the animation when the user hovers */
-.orrery-container:hover .orrery-scene {
-  animation-play-state: paused;
-}
-
-/* The individual book "planet" in the orrery */
-.orrery-item {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
-
-/* The keyframe animation for the rotation */
-@keyframes rotate-orrery {
+/* The keyframe animation for the scroll */
+@keyframes scroll-left {
   from {
-    transform: rotateY(0deg);
+    transform: translateX(0);
   }
+  /* We move it exactly the width of ONE set of the books */
   to {
-    transform: rotateY(360deg);
+    transform: translateX(-100%);
   }
 }
