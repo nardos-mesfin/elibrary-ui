@@ -18,3 +18,49 @@
     @apply px-6 py-2 bg-enchanted-teal text-parchment-cream font-serif-display rounded-md shadow-md hover:bg-teal-700 hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-150;
   }
 }
+
+/* === The Infinite Orrery Styles === */
+
+/* The main container that creates the 3D space */
+.orrery-container {
+  perspective: 1000px;
+  position: relative;
+  width: 100%;
+  height: 20rem; /* 320px */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* The scene that holds and rotates all the books */
+.orrery-scene {
+  width: 10rem; /* 160px */
+  height: 14rem; /* 224px */
+  position: relative;
+  transform-style: preserve-3d;
+  animation: rotate-orrery 30s linear infinite; /* The infinite rotation animation */
+}
+
+/* Pause the animation when the user hovers */
+.orrery-container:hover .orrery-scene {
+  animation-play-state: paused;
+}
+
+/* The individual book "planet" in the orrery */
+.orrery-item {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* The keyframe animation for the rotation */
+@keyframes rotate-orrery {
+  from {
+    transform: rotateY(0deg);
+  }
+  to {
+    transform: rotateY(360deg);
+  }
+}
