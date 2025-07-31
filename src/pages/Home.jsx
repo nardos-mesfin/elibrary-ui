@@ -80,8 +80,20 @@ function Home() {
       ) : (
         <>
           {/* The Carousels */}
-          <BreathingCarousel title="Newly Added Tomes" books={latestBooks} loading={loading} />
-          <BreathingCarousel title="Popular Archives" books={popularBooks} loading={loading} />
+          {/* This one will scroll left by default */}
+          <BreathingCarousel 
+              title="Newly Added Tomes" 
+              books={latestBooks} 
+              loading={loading} 
+            />
+            
+            {/* We command this one to scroll right */}
+            <BreathingCarousel 
+              title="Popular Archives" 
+              books={popularBooks} 
+              loading={loading} 
+              direction="right" 
+            />
         </>
       )}
     </div>

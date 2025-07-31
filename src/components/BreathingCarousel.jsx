@@ -1,9 +1,10 @@
 // src/components/BreathingCarousel.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useAnimation } from 'framer-motion';
 
 const CarouselCard = ({ book }) => {
+  // This component is perfect. No changes needed.
   return (
     <Link to={`/books/${book.id}`} className="block flex-shrink-0 w-48 mx-4">
       <motion.div
@@ -24,42 +25,57 @@ const CarouselCard = ({ book }) => {
   );
 };
 
-function BreathingCarousel({ title, books, loading }) {
+function BreathingCarousel({ title, books, loading, direction = 'left' }) {
   const controls = useAnimation();
   const [isHovered, setIsHovered] = useState(false);
-  const [scrollIndex, setScrollIndex] = useState(0);
-
-  const stepWidth = 224; // 12rem + 2rem margin
+  const stepWidth = 224; // 14rem = 224px
+  const timeoutId = useRef(null);
+  
+  const totalWidth = books.length * stepWidth;
+  // For the right-scroll, we start at the end of the first set of books.
+  const initialX = direction === 'right' ? -totalWidth : 0;
+  const xPosition = useRef(initialX);
 
   useEffect(() => {
-    if (!loading && !isHovered) {
-      const interval = setInterval(() => {
-        setScrollIndex((prevIndex) => prevIndex + 1);
-      }, 3000); // Scroll every 3 seconds
+    const startAnimation = () => {
+      timeoutId.current = setTimeout(() => {
+        const nextX = xPosition.current - (direction === 'left' ? stepWidth : -stepWidth);
+        
+        controls.start({
+          x: nextX,
+          transition: { duration: 1.5, ease: 'easeInOut' }
+        }).then(() => {
+          xPosition.current = nextX;
 
-      return () => clearInterval(interval);
+          // --- The NEW, Symmetrical Infinity Loop Trick ---
+          if (direction === 'left' && xPosition.current <= -totalWidth) {
+            xPosition.current = 0;
+            controls.set({ x: 0 }); // Jump back to the start
+          }
+          if (direction === 'right' && xPosition.current >= 0) {
+            xPosition.current = -totalWidth;
+            controls.set({ x: -totalWidth }); // Jump back to the start
+          }
+          
+          startAnimation(); // Schedule the next cycle
+        });
+
+      }, 3000);
+    };
+
+    if (!loading && !isHovered && books.length > 0) {
+      startAnimation();
     }
-  }, [isHovered, loading]);
 
-  useEffect(() => {
-    controls.start({
-      x: -scrollIndex * stepWidth,
-      transition: {
-        duration: 1,
-        ease: 'easeInOut'
-      }
-    });
-  }, [scrollIndex, controls]);
+    return () => { clearTimeout(timeoutId.current); controls.stop(); };
 
-  if (loading)
-    return (
-      <div className="h-80 w-full flex items-center justify-center">
-        <p>Arranging the bookshelves...</p>
-      </div>
-    );
+  }, [isHovered, loading, books, controls, direction, stepWidth, totalWidth]);
+
+  if (loading) return <div className="h-80 ..."><p>Arranging the bookshelves...</p></div>;
   if (!books || books.length === 0) return null;
 
-  const doubledBooks = [...books, ...books];
+  // The display logic remains the same
+  const displayBooks = [...books, ...books];
 
   return (
     <section className="mb-16">
@@ -69,8 +85,13 @@ function BreathingCarousel({ title, books, loading }) {
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        <motion.div className="flex" animate={controls}>
-          {doubledBooks.map((book, index) => (
+        <motion.div
+          className="flex"
+          // Set the initial position based on our calculation
+          style={{ x: initialX }}
+          animate={controls}
+        >
+          {displayBooks.map((book, index) => (
             <CarouselCard key={`${book.id}-${index}`} book={book} />
           ))}
         </motion.div>
