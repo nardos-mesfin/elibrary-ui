@@ -28,7 +28,9 @@ function EditBook() {
         const { categories, ...bookData } = bookResponse.data;
         setFormData(bookData);
         setSelectedCategories(categories.map(cat => cat.id));
-        setKeywords(keywords.map(kw => kw.term).join(', '));
+          if (keywords && Array.isArray(keywords)) {
+            setKeywords(keywords.map(kw => kw.term).join(', '));
+        }
         setAllCategories(categoriesResponse.data);
         
       } catch (err) {
