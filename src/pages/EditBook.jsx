@@ -25,7 +25,7 @@ function EditBook() {
           axios.get('/api/admin/categories')
         ]);
         
-        const { categories, ...bookData } = bookResponse.data;
+        const { categories, keywords,...bookData } = bookResponse.data;
         setFormData(bookData);
         setSelectedCategories(categories.map(cat => cat.id));
           if (keywords && Array.isArray(keywords)) {
