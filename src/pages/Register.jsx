@@ -1,34 +1,35 @@
 // src/pages/Register.jsx
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
+import NotificationContext from '../context/NotificationContext';
 
 function Register() {
   const [formData, setFormData] = useState({ name: '', email: '', password: '', password_confirmation: '' });
-  const [error, setError] = useState('');
   const navigate = useNavigate();
+  const { showNotification } = useContext(NotificationContext);
 
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
     if (formData.password !== formData.password_confirmation) {
-        setError("Passwords do not match.");
+        showNotification("Passwords do not match.", 'error');
         return;
     }
     try {
-      await axios.post('http://127.0.0.1:8000/api/register', formData);
+      await axios.post('/api/register', formData);
+      showNotification('Registration successful! Please log in.', 'success');
       navigate('/login');
     } catch (err) {
-      setError(err.response?.data?.message || 'Registration failed. Please try again.');
+      // Use the notification system for errors
+      showNotification(err.response?.data?.message || 'Registration failed. Please try again.', 'error');
     }
   };
 
   return (
     <div className="max-w-md mx-auto mt-10 p-8 bg-parchment-cream/70 rounded-lg shadow-xl border border-dusty-rose">
       <h1 className="font-serif-display text-4xl text-center mb-6">Join the Library</h1>
-      {error && <p className="bg-red-200 text-red-800 p-3 rounded-md mb-4">{error}</p>}
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
           <label htmlFor="name" className="block text-sm font-medium text-old-book-brown">Your Name</label>

@@ -16,6 +16,7 @@ import BookDetail from './pages/BookDetail';
 import EditBook from './pages/EditBook';
 import ManageCategories from './pages/ManageCategories';
 import CategoryPage from './pages/CategoryPage';
+import Notification from './components/Notification';
 
 function App() {
   const location = useLocation();
@@ -23,6 +24,7 @@ function App() {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
+      <Notification />
       <main className="flex-grow container mx-auto px-4 py-8">
         <AnimatePresence mode="wait">
           <motion.div

@@ -1,22 +1,22 @@
 // src/pages/EditBook.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import NotificationContext from '../context/NotificationContext';
 
 function EditBook() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { showNotification } = useContext(NotificationContext);
 
   const [formData, setFormData] = useState({ title: '', author: '', summary: '', publisher: '', pages: '' });
   const [coverImage, setCoverImage] = useState(null);
-  const [bookFile, setBookFile] = useState(null); // <-- DECLARED the state
+  const [bookFile, setBookFile] = useState(null);
   const [allCategories, setAllCategories] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Professional: Fetch both sets of data in parallel
     const fetchData = async () => {
       try {
         const [bookResponse, categoriesResponse] = await Promise.all([
@@ -24,7 +24,6 @@ function EditBook() {
           axios.get('/api/admin/categories')
         ]);
         
-        // Exclude the categories array from the main form data
         const { categories, ...bookData } = bookResponse.data;
         setFormData(bookData);
         setSelectedCategories(categories.map(cat => cat.id));
@@ -32,19 +31,19 @@ function EditBook() {
         
       } catch (err) {
         console.error(err);
-        setError("Could not load the tome's current inscriptions.");
+        // BANISH THE GHOST: Use showNotification instead of setError
+        showNotification("Could not load the tome's current inscriptions.", 'error');
+        navigate('/'); // Navigate away on critical error
       } finally {
         setLoading(false);
       }
     };
-
     fetchData();
   }, [id]);
 
   const handleTextChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
   const handleCoverImageChange = (e) => setCoverImage(e.target.files[0]);
-  const handleBookFileChange = (e) => setBookFile(e.target.files[0]); // <-- DECLARED the handler
-
+  const handleBookFileChange = (e) => setBookFile(e.target.files[0]);
   const handleCategoryChange = (categoryId) => {
     setSelectedCategories(prev =>
       prev.includes(categoryId) ? prev.filter(id => id !== categoryId) : [...prev, categoryId]
@@ -53,41 +52,29 @@ function EditBook() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
-
-    const submissionData = new FormData();
-    // This is the CRITICAL fix for the routing error
-    submissionData.append('_method', 'POST'); 
-
-    // Append all the text fields
-    Object.keys(formData).forEach(key => submissionData.append(key, formData[key]));
     
-    // Append files only if they've been changed
+    const submissionData = new FormData();
+    submissionData.append('_method', 'POST');
+    Object.keys(formData).forEach(key => submissionData.append(key, formData[key]));
     if (coverImage) submissionData.append('cover_image', coverImage);
     if (bookFile) submissionData.append('book_file', bookFile);
-    
-    // Append the category IDs
     selectedCategories.forEach(id => submissionData.append('categories[]', id));
 
     try {
-      // Use the corrected, unique update route
-      await axios.post(`/api/books/${id}/update`, submissionData); 
+      await axios.post(`/api/books/${id}/update`, submissionData);
+      showNotification('The tome has been successfully revised.', 'success');
       navigate(`/books/${id}`);
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to save your revisions.');
+      // BANISH THE GHOST: Use showNotification instead of setError
+      showNotification(err.response?.data?.message || 'Failed to save your revisions.', 'error');
     }
   };
 
-  if (loading) return <p className="text-center ...">Loading the scribe's desk...</p>;
+  if (loading) return <p className="text-center text-lg font-serif-display">Loading the scribe's desk...</p>;
 
   return (
     <div className="max-w-2xl mx-auto mt-10 p-8 bg-parchment-cream/70 rounded-lg shadow-xl border border-dusty-rose">
       <h1 className="font-serif-display text-4xl text-center mb-6">Revise the Tome</h1>
-
-      {error && (
-        <p className="bg-red-200 text-red-800 p-3 rounded-md mb-4">{error}</p>
-      )}
-
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>

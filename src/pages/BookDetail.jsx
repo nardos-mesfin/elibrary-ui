@@ -6,23 +6,23 @@ import AuthContext from '../context/AuthContext';
 import ConfirmationModal from '../components/ConfirmationModal';
 import CommentList from '../components/CommentList';
 import CommentForm from '../components/CommentForm';
+import NotificationContext from '../context/NotificationContext';
 
 function BookDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
+  const { showNotification } = useContext(NotificationContext);
 
   // --- STATE MANAGEMENT ---
   const [book, setBook] = useState(null);
   const [comments, setComments] = useState([]); // State for the discussion
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmittingComment, setIsSubmittingComment] = useState(false); // For disabling the comment form
 
   // --- DATA FETCHING ---
   useEffect(() => {
-    // Fetch both the book details and its comments at the same time for efficiency
     const fetchBookAndComments = async () => {
       setLoading(true);
       try {
@@ -34,27 +34,27 @@ function BookDetail() {
         setComments(commentsResponse.data);
       } catch (err) {
         console.error("Failed to fetch book details:", err);
-        setError('Could not find the requested tome.');
+        // Use the notification system for the fetch error
+        showNotification('Could not find the requested tome.', 'error');
+        // We can also navigate the user away from the broken page
+        navigate('/');
       } finally {
         setLoading(false);
       }
     };
     fetchBookAndComments();
-  }, [id]); // Re-run this effect if the book ID in the URL changes
+  }, [id]);
 
-  // --- HANDLER FUNCTIONS ---
-  const handleDeleteClick = () => {
-    setIsModalOpen(true);
-  };
+  const handleDeleteClick = () => setIsModalOpen(true);
 
   const confirmDelete = async () => {
     try {
       await axios.delete(`/api/books/${id}`);
       setIsModalOpen(false);
+      showNotification('The tome has been removed from the archives.', 'success');
       navigate('/');
     } catch (err) {
-      console.error(err);
-      alert('Failed to remove the book.');
+      showNotification('Failed to remove the book.', 'error');
       setIsModalOpen(false);
     }
   };
@@ -63,22 +63,20 @@ function BookDetail() {
     setIsSubmittingComment(true);
     try {
       const response = await axios.post(`/api/books/${id}/comments`, { body: commentBody });
-      // "Optimistic Update": Instantly add the new comment to the top of the list
-      // without needing to re-fetch all comments from the server.
       setComments(prevComments => [response.data, ...prevComments]);
     } catch (err) {
+      showNotification("Could not post your commentary. Please try again.", 'error');
       console.error("Failed to post comment:", err);
-      alert("Could not post your commentary. Please try again.");
     } finally {
       setIsSubmittingComment(false);
     }
   };
 
-  // --- RENDER LOGIC ---
+  // The loading check is now sufficient. If an error occurs, the user
+  // is navigated away, so we don't need a separate error display here.
   if (loading) return <p className="text-center text-lg font-serif-display">Unveiling the tome...</p>;
-  if (error) return <p className="text-center text-lg text-red-700 font-serif-display">{error}</p>;
-  if (!book) return null;
-
+  if (!book) return null; // If loading is done and there's no book, render nothing.
+  
   return (
     <>
       {/* --- Main Book Details Section --- */}

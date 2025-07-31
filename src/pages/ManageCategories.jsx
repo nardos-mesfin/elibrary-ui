@@ -1,14 +1,13 @@
 // src/pages/ManageCategories.jsx
-
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
+import NotificationContext from '../context/NotificationContext';
 
 function ManageCategories() {
   const [categories, setCategories] = useState([]);
   const [newCategoryName, setNewCategoryName] = useState('');
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const { showNotification } = useContext(NotificationContext);
 
   // Function to fetch all categories
   const fetchCategories = async () => {
@@ -23,21 +22,19 @@ function ManageCategories() {
   };
 
   // Fetch categories when the component mounts
-  useEffect(() => {
-    fetchCategories();
-  }, []);
+  useEffect(() => { fetchCategories(); }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
-    setSuccess('');
     try {
       await axios.post('/api/admin/categories', { name: newCategoryName });
-      setSuccess(`Category "${newCategoryName}" created successfully!`);
-      setNewCategoryName(''); // Clear the input
-      fetchCategories(); // Refresh the list
+      // Use the notification system for success
+      showNotification(`Category "${newCategoryName}" created successfully!`, 'success');
+      setNewCategoryName('');
+      fetchCategories();
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to create category.');
+      // Use the notification system for errors
+      showNotification(err.response?.data?.message || 'Failed to create category.', 'error');
     }
   };
 
@@ -50,8 +47,6 @@ function ManageCategories() {
       {/* Form for creating a new category */}
       <div className="mb-12 p-8 bg-parchment-cream/70 rounded-lg shadow-xl border border-dusty-rose">
         <h2 className="font-serif-display text-3xl mb-4">Inscribe a New Category</h2>
-        {error && <p className="bg-red-200 text-red-800 p-3 rounded-md mb-4">{error}</p>}
-        {success && <p className="bg-green-200 text-green-800 p-3 rounded-md mb-4">{success}</p>}
         <form onSubmit={handleSubmit} className="flex items-center space-x-4">
           <input
             type="text"
