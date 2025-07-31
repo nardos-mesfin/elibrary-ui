@@ -73,7 +73,20 @@ function BookDetail() {
             <p><strong>Publisher:</strong> {book.publisher || 'Unknown'}</p>
             <p><strong>Pages:</strong> {book.pages || 'N/A'}</p>
           </div>
-
+          {/* --- The Reading Section --- */}
+          {/* Show this section only if the user is logged in and the file exists */}
+          {user && book.full_file_url && (
+            <div className="mt-8">
+              <a 
+                href={book.full_file_url} 
+                target="_blank" // Opens the PDF in a new tab
+                rel="noopener noreferrer" 
+                className="btn text-lg"
+              >
+                Read Now
+              </a>
+            </div>
+          )}
           {user && user.is_admin === 1 && (
             <div className="mt-8 flex space-x-4">
                 <Link to={`/books/${book.id}/edit`} className="btn">

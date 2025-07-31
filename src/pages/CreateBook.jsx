@@ -12,6 +12,7 @@ function CreateBook() {
     pages: ''
   });
   const [coverImage, setCoverImage] = useState(null);
+  const [bookFile, setBookFile] = useState(null); // <-- THE MISSING STATE
   const [allCategories, setAllCategories] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [message, setMessage] = useState('');
@@ -31,6 +32,12 @@ function CreateBook() {
   const handleFileChange = (e) => {
     setCoverImage(e.target.files[0]);
   };
+
+  // --- THIS IS THE MISSING SPELL ---
+  const handleBookFileChange = (e) => {
+    setBookFile(e.target.files[0]);
+  };
+  // ------------------------------------
 
   const handleCategoryChange = (categoryId) => {
     setSelectedCategories(prev =>
@@ -52,12 +59,16 @@ function CreateBook() {
     if (coverImage) {
       submissionData.append('cover_image', coverImage);
     }
+    if (bookFile) {
+      submissionData.append('book_file', bookFile);
+    }
     selectedCategories.forEach(id =>
       submissionData.append('categories[]', id)
     );
 
     try {
-      await axios.post('http://127.0.0.1:8000/api/books', submissionData);
+      // Send to the correct endpoint. Note: you had an extra http:// here before
+      await axios.post('/api/books', submissionData); 
       setMessage('The new tome has been successfully added to the shelves!');
       setTimeout(() => navigate('/'), 2000);
     } catch (err) {
@@ -67,7 +78,6 @@ function CreateBook() {
       );
     }
   };
-
   return (
     <div className="max-w-2xl mx-auto mt-10 p-8 bg-parchment-cream/70 rounded-lg shadow-xl border border-dusty-rose">
       <h1 className="font-serif-display text-4xl text-center mb-6">Inscribe a New Tome</h1>
@@ -138,7 +148,6 @@ function CreateBook() {
             className="form-input mt-1"
           ></textarea>
         </div>
-
         <div>
           <label htmlFor="cover_image" className="block text-sm font-medium text-old-book-brown">Book Cover</label>
           <input
@@ -149,7 +158,16 @@ function CreateBook() {
             className="form-input mt-1 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-enchanted-teal/20 file:text-enchanted-teal hover:file:bg-enchanted-teal/30"
           />
         </div>
-
+        <div>
+          <label htmlFor="book_file" className="block text-sm font-medium text-old-book-brown">Book File (PDF/ePub)</label>
+          <input
+            type="file"
+            name="book_file"
+            id="book_file"
+            onChange={handleBookFileChange}
+            className="form-input mt-1 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-enchanted-teal/20 file:text-enchanted-teal hover:file:bg-enchanted-teal/30"
+          />
+        </div>
         {/* Categories Section */}
         <div>
           <label className="block text-sm font-medium text-old-book-brown mb-2">Categories</label>

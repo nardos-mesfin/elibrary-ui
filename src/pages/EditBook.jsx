@@ -7,50 +7,47 @@ function EditBook() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const [formData, setFormData] = useState({
-    title: '',
-    author: '',
-    summary: '',
-    publisher: '',
-    pages: ''
-  });
+  const [formData, setFormData] = useState({ title: '', author: '', summary: '', publisher: '', pages: '' });
   const [coverImage, setCoverImage] = useState(null);
+  const [bookFile, setBookFile] = useState(null); // <-- DECLARED the state
   const [allCategories, setAllCategories] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get(`/api/books/${id}`)
-      .then(response => {
-        setFormData(response.data);
-        setSelectedCategories(response.data.categories.map(cat => cat.id));
-        setLoading(false);
-      })
-      .catch(err => {
+    // Professional: Fetch both sets of data in parallel
+    const fetchData = async () => {
+      try {
+        const [bookResponse, categoriesResponse] = await Promise.all([
+          axios.get(`/api/books/${id}`),
+          axios.get('/api/admin/categories')
+        ]);
+        
+        // Exclude the categories array from the main form data
+        const { categories, ...bookData } = bookResponse.data;
+        setFormData(bookData);
+        setSelectedCategories(categories.map(cat => cat.id));
+        setAllCategories(categoriesResponse.data);
+        
+      } catch (err) {
         console.error(err);
         setError("Could not load the tome's current inscriptions.");
+      } finally {
         setLoading(false);
-      });
+      }
+    };
 
-    axios.get('/api/admin/categories')
-      .then(response => setAllCategories(response.data))
-      .catch(err => console.error('Failed to fetch categories:', err));
+    fetchData();
   }, [id]);
 
-  const handleTextChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleFileChange = (e) => {
-    setCoverImage(e.target.files[0]);
-  };
+  const handleTextChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleCoverImageChange = (e) => setCoverImage(e.target.files[0]);
+  const handleBookFileChange = (e) => setBookFile(e.target.files[0]); // <-- DECLARED the handler
 
   const handleCategoryChange = (categoryId) => {
     setSelectedCategories(prev =>
-      prev.includes(categoryId)
-        ? prev.filter(id => id !== categoryId)
-        : [...prev, categoryId]
+      prev.includes(categoryId) ? prev.filter(id => id !== categoryId) : [...prev, categoryId]
     );
   };
 
@@ -59,26 +56,29 @@ function EditBook() {
     setError('');
 
     const submissionData = new FormData();
-    submissionData.append('_method', 'POST');
-    Object.keys(formData).forEach(key => {
-      submissionData.append(key, formData[key]);
-    });
-    if (coverImage) {
-      submissionData.append('cover_image', coverImage);
-    }
-    selectedCategories.forEach(id =>
-      submissionData.append('categories[]', id)
-    );
+    // This is the CRITICAL fix for the routing error
+    submissionData.append('_method', 'POST'); 
+
+    // Append all the text fields
+    Object.keys(formData).forEach(key => submissionData.append(key, formData[key]));
+    
+    // Append files only if they've been changed
+    if (coverImage) submissionData.append('cover_image', coverImage);
+    if (bookFile) submissionData.append('book_file', bookFile);
+    
+    // Append the category IDs
+    selectedCategories.forEach(id => submissionData.append('categories[]', id));
 
     try {
-      await axios.post(`/api/books/${id}/update`, submissionData);
+      // Use the corrected, unique update route
+      await axios.post(`/api/books/${id}/update`, submissionData); 
       navigate(`/books/${id}`);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to save your revisions.');
     }
   };
 
-  if (loading) return <p className="text-center text-lg font-serif-display">Loading the scribe's desk...</p>;
+  if (loading) return <p className="text-center ...">Loading the scribe's desk...</p>;
 
   return (
     <div className="max-w-2xl mx-auto mt-10 p-8 bg-parchment-cream/70 rounded-lg shadow-xl border border-dusty-rose">
@@ -159,11 +159,20 @@ function EditBook() {
             type="file"
             name="cover_image"
             id="cover_image"
-            onChange={handleFileChange}
+            onChange={handleCoverImageChange}
             className="form-input mt-1 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-enchanted-teal/20 file:text-enchanted-teal hover:file:bg-enchanted-teal/30"
           />
         </div>
-
+        <div>
+          <label htmlFor="book_file" className="block text-sm font-medium text-old-book-brown">Book File (PDF/ePub)</label>
+          <input
+            type="file"
+            name="book_file"
+            id="book_file"
+            onChange={handleBookFileChange}
+            className="form-input mt-1 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-enchanted-teal/20 file:text-enchanted-teal hover:file:bg-enchanted-teal/30"
+          />
+        </div>
         {/* Categories Section */}
         <div>
           <label className="block text-sm font-medium text-old-book-brown mb-2">Categories</label>
