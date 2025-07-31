@@ -96,9 +96,13 @@ function BookDetail() {
           
           <div className="flex flex-wrap gap-2 mt-4">
             {book.categories && book.categories.map(category => (
-              <span key={category.id} className="bg-enchanted-teal/20 text-enchanted-teal text-sm font-serif-body px-3 py-1 rounded-full">
-                {category.name}
-              </span>
+              // Wrap the span in a Link component
+              <Link to={`/categories/${category.id}`} key={category.id}>
+                <span className="bg-enchanted-teal/20 text-enchanted-teal text-sm font-serif-body px-3 py-1 rounded-full
+                                hover:bg-enchanted-teal/40 transition-colors cursor-pointer">
+                  {category.name}
+                </span>
+              </Link>
             ))}
           </div>
 

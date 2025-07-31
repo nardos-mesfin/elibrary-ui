@@ -15,6 +15,7 @@ import ManageUsers from './pages/ManageUsers';
 import BookDetail from './pages/BookDetail';
 import EditBook from './pages/EditBook';
 import ManageCategories from './pages/ManageCategories';
+import CategoryPage from './pages/CategoryPage';
 
 function App() {
   const location = useLocation();
@@ -34,6 +35,7 @@ function App() {
             <Routes location={location}>
               <Route path="/" element={<Home />} />
               <Route path="/books/:id" element={<BookDetail />} />
+              <Route path="/categories/:id" element={<CategoryPage />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
 
