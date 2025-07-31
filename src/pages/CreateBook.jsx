@@ -12,6 +12,7 @@ function CreateBook() {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const navigate = useNavigate();
   const { showNotification } = useContext(NotificationContext);
+  const [keywords, setKeywords] = useState('');
 
   useEffect(() => {
     axios.get('/api/admin/categories')
@@ -39,6 +40,9 @@ function CreateBook() {
     Object.keys(formData).forEach(key => submissionData.append(key, formData[key]));
     if (coverImage) submissionData.append('cover_image', coverImage);
     if (bookFile) submissionData.append('book_file', bookFile);
+    if (keywords) {
+      submissionData.append('keywords', keywords); // <-- APPEND THE KEYWORDS
+    }
     selectedCategories.forEach(id => submissionData.append('categories[]', id));
 
     try {
@@ -102,6 +106,19 @@ function CreateBook() {
               ))
             ) : ( <p className="text-sm text-gray-500 col-span-full">No categories available.</p> )}
           </div>
+        </div>
+        <div>
+          <label htmlFor="keywords" className="block text-sm font-medium text-old-book-brown">Keywords</label>
+          <input
+            type="text"
+            name="keywords"
+            id="keywords"
+            value={keywords}
+            onChange={(e) => setKeywords(e.target.value)}
+            className="form-input mt-1"
+            placeholder="e.g., magic, dragons, space travel"
+          />
+          <p className="text-xs text-old-book-brown/70 mt-1">Separate keywords with a comma.</p>
         </div>
         <div>
           <button type="submit" className="btn w-full">Add to Collection</button>

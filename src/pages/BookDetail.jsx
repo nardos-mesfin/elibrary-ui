@@ -103,7 +103,13 @@ function BookDetail() {
               </Link>
             ))}
           </div>
-
+          <div className="flex flex-wrap gap-2 mt-2">
+            {book.keywords && book.keywords.map(keyword => (
+              <span key={keyword.id} className="bg-dusty-rose/50 text-old-book-brown text-xs font-serif-body px-2 py-1 rounded-md">
+                #{keyword.term}
+              </span>
+            ))}
+          </div>
           <p className="mt-6 text-lg leading-relaxed">{book.summary || "No summary is written for this tome yet."}</p>
           
           <div className="mt-8 border-t border-dusty-rose pt-4 text-sm">

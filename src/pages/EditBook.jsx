@@ -15,6 +15,7 @@ function EditBook() {
   const [allCategories, setAllCategories] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [keywords, setKeywords] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -27,6 +28,7 @@ function EditBook() {
         const { categories, ...bookData } = bookResponse.data;
         setFormData(bookData);
         setSelectedCategories(categories.map(cat => cat.id));
+        setKeywords(keywords.map(kw => kw.term).join(', '));
         setAllCategories(categoriesResponse.data);
         
       } catch (err) {
@@ -58,6 +60,9 @@ function EditBook() {
     Object.keys(formData).forEach(key => submissionData.append(key, formData[key]));
     if (coverImage) submissionData.append('cover_image', coverImage);
     if (bookFile) submissionData.append('book_file', bookFile);
+    if (keywords) {
+      submissionData.append('keywords', keywords); // <-- APPEND THE KEYWORDS
+    }
     selectedCategories.forEach(id => submissionData.append('categories[]', id));
 
     try {
@@ -181,7 +186,19 @@ function EditBook() {
             )}
           </div>
         </div>
-
+        <div>
+          <label htmlFor="keywords" className="block text-sm font-medium text-old-book-brown">Keywords</label>
+          <input
+            type="text"
+            name="keywords"
+            id="keywords"
+            value={keywords}
+            onChange={(e) => setKeywords(e.target.value)}
+            className="form-input mt-1"
+            placeholder="e.g., magic, dragons, space travel"
+          />
+          <p className="text-xs text-old-book-brown/70 mt-1">Separate keywords with a comma.</p>
+        </div>
         <div>
           <button type="submit" className="btn w-full">
             Save Revisions
